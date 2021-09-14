@@ -8,7 +8,7 @@ import { AMapManager, lazyAMapApiLoaderInstance } from "vue-amap";
 // 方法
 import { getLngLat } from "./common";
 import { addressSetMapCenter } from "./location";
-import { amapSetMarker } from "./marker";
+import { amapSetMarker, amapClearMarker } from "./marker";
 export default {
   name: "Amap",
   data() {
@@ -50,6 +50,10 @@ export default {
     //设置点覆盖物
     setMarker() {
       amapSetMarker(this.lnglat, this.map);
+    },
+    //清除点覆盖物
+    clearMarker() {
+      amapClearMarker(this.map);
     },
   },
 };
