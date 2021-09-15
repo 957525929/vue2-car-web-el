@@ -4,20 +4,16 @@
       <el-row>
         <el-col :span="18">
           <el-form :inline="true" :model="form" class="demo-form-inline">
-            <el-form-item label="停车场名称">
+            <!-- <el-form-item label="停车场名称">
               <el-input v-model="form.parking_name" placeholder="审批人"></el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="区域">
               <CityArea ref="cityArea" :cityAreaValue.sync="form.area" @callback="callbackComponent" />
             </el-form-item>
             <el-form-item label="类型">
               <el-select v-model="form.type" placeholder="活动区域">
-                <el-option v-for="item in parking_type" :label="item.label" :value="item.value" :key="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="禁启用">
-              <el-select v-model="form.status" placeholder="请选择" class="width-120">
-                <el-option v-for="item in parking_status" :label="item.label" :value="item.value" :key="item.value"></el-option>
+                <el-option label="室内" value="shanghai"></el-option>
+                <el-option label="室外" value="beijing"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -37,13 +33,13 @@
     <!-- 表格数据 -->
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="selection" width="35"></el-table-column>
-      <el-table-column prop="parkingName" label="停车场名称"></el-table-column>
+      <el-table-column prop="name" label="停车场名称"></el-table-column>
       <el-table-column prop="type" label="类型"></el-table-column>
       <el-table-column prop="area" label="区域"></el-table-column>
       <el-table-column prop="carsNumber" label="可停放车辆"></el-table-column>
       <el-table-column prop="disabled" label="禁启用">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.status" active-value="2" inactive-value="1" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
+          <el-switch v-model="scope.row.disabled" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
         </template>
       </el-table-column>
       <el-table-column prop="address" label="查看位置"></el-table-column>
@@ -84,6 +80,8 @@ export default {
         area: "",
         type: "",
       },
+            parking_status: this.$store.state.config.parking_status,
+            parking_type: this.$store.state.config.parking_type,
       options: [
         {
           value: 1111,
@@ -117,10 +115,6 @@ export default {
         },
       ],
       tableData: [],
-      // 禁启用
-      parking_status: this.$store.state.config.parking_status,
-      // 停车场类型
-      parking_type: this.$store.state.config.parking_type,
     };
   },
   components: { CityArea },
@@ -149,7 +143,6 @@ export default {
     },
     /** 页码 */
     handleSizeChange(val) {
-      console.log(val);
       this.pageSize = val;
       this.getParkingList();
     },

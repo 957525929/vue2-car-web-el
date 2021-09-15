@@ -45,7 +45,6 @@ export default {
   // name: "ParkingAdd",
   data() {
     return {
-      button_loading: false,
       status: [
         { label: "禁用", value: 1 },
         { label: "启用", value: 2 },
@@ -100,18 +99,10 @@ export default {
     //新增停车场
     addParking() {
       this.button_loading = true;
-      ParkingAdd(this.form)
-        .then((response) => {
-          this.$message({
-            type: "primary",
-            message: response.message,
-          });
-          this.button_loading = false;
-          this.reset("form");
-        })
-        .catch((error) => {
-          this.button_loading = false;
-        });
+      ParkingAdd(this.form).then((response) => {
+        console.log(response);
+        // this.reset("form");
+      });
     },
     //重置表单
     reset(formName) {

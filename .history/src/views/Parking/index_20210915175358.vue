@@ -37,7 +37,7 @@
     <!-- 表格数据 -->
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="selection" width="35"></el-table-column>
-      <el-table-column prop="parkingName" label="停车场名称"></el-table-column>
+      <el-table-column prop="name" label="停车场名称"></el-table-column>
       <el-table-column prop="type" label="类型"></el-table-column>
       <el-table-column prop="area" label="区域"></el-table-column>
       <el-table-column prop="carsNumber" label="可停放车辆"></el-table-column>
@@ -149,7 +149,7 @@ export default {
     },
     /** 页码 */
     handleSizeChange(val) {
-      console.log(val);
+        console.log(va);
       this.pageSize = val;
       this.getParkingList();
     },

@@ -8,16 +8,12 @@
               <el-input v-model="form.parking_name" placeholder="审批人"></el-input>
             </el-form-item>
             <el-form-item label="区域">
-              <CityArea ref="cityArea" :cityAreaValue.sync="form.area" @callback="callbackComponent" />
+              <el-cascader v-model="form.area" :options="options" :props="{ expandTrigger: 'hover' }"></el-cascader>
             </el-form-item>
             <el-form-item label="类型">
               <el-select v-model="form.type" placeholder="活动区域">
-                <el-option v-for="item in parking_type" :label="item.label" :value="item.value" :key="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="禁启用">
-              <el-select v-model="form.status" placeholder="请选择" class="width-120">
-                <el-option v-for="item in parking_status" :label="item.label" :value="item.value" :key="item.value"></el-option>
+                <el-option label="室内" value="shanghai"></el-option>
+                <el-option label="室外" value="beijing"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -37,13 +33,13 @@
     <!-- 表格数据 -->
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="selection" width="35"></el-table-column>
-      <el-table-column prop="parkingName" label="停车场名称"></el-table-column>
+      <el-table-column prop="name" label="停车场名称"></el-table-column>
       <el-table-column prop="type" label="类型"></el-table-column>
       <el-table-column prop="area" label="区域"></el-table-column>
       <el-table-column prop="carsNumber" label="可停放车辆"></el-table-column>
       <el-table-column prop="disabled" label="禁启用">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.status" active-value="2" inactive-value="1" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
+          <el-switch v-model="scope.row.disabled" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
         </template>
       </el-table-column>
       <el-table-column prop="address" label="查看位置"></el-table-column>
@@ -54,19 +50,10 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-row class="padding-top-30">
-      <el-col :span="4"><div style="padding: 5px;"></div></el-col>
-      <el-col :span="20">
-        <el-pagination class="pull-right" background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 50, 100]" :page-size="10" layout="total, sizes, prev, pager, next, jumper" :total="total"> </el-pagination>
-      </el-col>
-    </el-row>
   </div>
 </template>
 <script>
-// 组件
-import CityArea from "@c/common/cityArea";
-// API
-import { ParkingList } from "@/api/parking";
+import { ParkingList } from "@/api/common";
 
 export default {
   name: "Parking",
@@ -117,45 +104,27 @@ export default {
         },
       ],
       tableData: [],
-      // 禁启用
-      parking_status: this.$store.state.config.parking_status,
-      // 停车场类型
-      parking_type: this.$store.state.config.parking_type,
     };
   },
-  components: { CityArea },
   methods: {
-    callbackComponent(params) {
-      if (params.function) {
-        this[params.function](params.data);
-      }
-    },
     getParkingList() {
       const requestData = {
         pageSize: this.pageSize,
         pageNumber: this.pageNumber,
       };
       ParkingList(requestData).then((response) => {
-        const data = response.data;
-        // 判断数据是否存在
-        if (data) {
-          this.tableData = data.data;
-        }
-        // 页码
-        if (data.total) {
-          this.total = data.total;
-        }
+        // const data = response.data;
+        // // 判断数据是否存在
+        // if (data) {
+        //   this.tableData = data.data;
+        // }
+        // // 页码
+        // if (data.total) {
+        //   this.total = data.total;
+        // }
+        console.log(response);
       });
-    },
-    /** 页码 */
-    handleSizeChange(val) {
-      console.log(val);
-      this.pageSize = val;
-      this.getParkingList();
-    },
-    handleCurrentChange(val) {
-      this.pageNumber = val;
-      this.getParkingList();
+      console.log("11111");
     },
   },
   // DOM元素渲染之前（生命周期）

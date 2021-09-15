@@ -37,13 +37,13 @@
     <!-- 表格数据 -->
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="selection" width="35"></el-table-column>
-      <el-table-column prop="parkingName" label="停车场名称"></el-table-column>
+      <el-table-column prop="name" label="停车场名称"></el-table-column>
       <el-table-column prop="type" label="类型"></el-table-column>
       <el-table-column prop="area" label="区域"></el-table-column>
       <el-table-column prop="carsNumber" label="可停放车辆"></el-table-column>
       <el-table-column prop="disabled" label="禁启用">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.status" active-value="2" inactive-value="1" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
+          <el-switch v-model="scope.row.disabled" active-value="2" inactive-value="1" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
         </template>
       </el-table-column>
       <el-table-column prop="address" label="查看位置"></el-table-column>
@@ -149,7 +149,6 @@ export default {
     },
     /** 页码 */
     handleSizeChange(val) {
-      console.log(val);
       this.pageSize = val;
       this.getParkingList();
     },
