@@ -44,19 +44,50 @@ export default {
     });
   },
   methods: {
+    //创建地图
+    mapCreate() {
+      this.map = new AMap.Map("amapContainer", {
+        center: [116.404765, 39.918052],
+        zoom: this.zoom, //初始化地图层级
+      });
+      this.map.on("complete", () => {
+        this.mapLoad();
+      });
+    },
+    /**
+     * 地图加载完成
+     */
+    mapLoad() {
+      if (this.options.mapLoad) {
+        this.$emit("callback", {
+          function: "mapLoad",
+        });
+      }
+    },
+    //销毁地图
+    mapDestroy() {
+      this.map && this.map.destroy();
+    },
     setMapCenter(value) {
       addressSetMapCenter(value, this.map);
     },
     //设置点覆盖物
-    setMarker() {
-      amapSetMarker(this.lnglat, this.map);
+    setMarker(lnglat) {
+      console.log(lnglat);
+      amapSetMarker(lnglat || this.lnglat, this.map);
     },
     //清除点覆盖物
     clearMarker() {
       amapClearMarker(this.map);
     },
   },
-};
+  props: {
+    options: {
+      type: Object,
+      default: () => {},
+    },
+  },
+ };
 </script>
 <style lang="scss">
 .amap-wrap {

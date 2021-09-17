@@ -1,6 +1,8 @@
 <template>
   <el-cascader
+    :class="{ 'cascader-input': initValueFlag }"
     v-model="value"
+    :placeholder="initValue"
     :options="cascader_options"
     :props="cascader_props"
     @change="changeValue"
@@ -62,9 +64,16 @@ export default {
           }
         },
       },
+      initValue: "请选择省市区",
+      initValueFlag: false,
     };
   },
   methods: {
+    //初始化默认值
+    initDefault(value) {
+      this.initValueFlag = true;
+      this.initValue = value.split(",").join(" / ");
+    },
     changeValue(value) {
       this.$emit("update:cityAreaValue", value.join());
       // 匹配最后一项，区县

@@ -19,11 +19,38 @@ export function ParkingList(data = {}) {
   });
 }
 
-/** 停车场列表 */
+/** 停车场详情 */
 export function ParkingDetailed(data = {}) {
   return service.request({
     method: "post",
     url: "/parking/detailed/",
+    data,
+  });
+}
+
+/** 停车场修改 */
+export function ParkingEdit(data = {}) {
+  return service.request({
+    method: "post",
+    url: "/parking/edit/",
+    data,
+  });
+}
+
+/** 停车场删除 */
+export function ParkingDelete(data = {}) {
+  return service.request({
+    method: "post",
+    url: "/parking/delete/",
+    data,
+  });
+}
+
+/** 禁启用 */
+export function ParkingStatus(data = {}) {
+  return service.request({
+    method: "post",
+    url: "/parking/status/",
     data,
   });
 }
