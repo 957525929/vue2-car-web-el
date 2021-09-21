@@ -12,6 +12,9 @@
           @callback="callbackComponent"
         />
       </el-form-item>
+      <el-form-item label="详细地址" prop="address">
+        <el-input v-model="form.address"></el-input>
+      </el-form-item>
       <el-form-item label="类型" prop="type">
         <el-radio-group v-model="form.type">
           <el-radio
@@ -26,7 +29,7 @@
         <el-input v-model.number="form.carsNumber"></el-input>
       </el-form-item>
       <el-form-item label="禁启用" prop="status">
-        <el-radio-group v-model="form.status">
+        <el-radio-group v-model="form.status" @change="changeData">
           <el-radio
             v-for="item in status"
             :label="item.value"
@@ -60,6 +63,7 @@ import AMap from "../amap";
 import CityArea from "@c/common/cityArea";
 //api
 import { ParkingAdd, ParkingDetailed, ParkingEdit } from "@/api/parking";
+
 export default {
   // name: "ParkingAdd",
   data() {
@@ -197,6 +201,9 @@ export default {
     },
     mapLoad() {
       this.getDetailed();
+    },
+    changeData(value) {
+      console.log(value);
     },
   },
 };
