@@ -1,7 +1,13 @@
 <template>
   <div>
     <!-- 表格数据 -->
-    <el-table :data="table_data" border style="width: 100%">
+    <el-table
+      v-loading="loading_data"
+      element-loading-text="加载中"
+      :data="table_data"
+      border
+      style="width: 100%"
+    >
       <el-table-column
         v-if="table_config.checkbox"
         type="selection"
@@ -68,6 +74,8 @@ export default {
   name: "TableComponent",
   data() {
     return {
+      //加载提示
+      loading_data: false,
       table_data: [],
       table_config: {
         thead: [],
@@ -100,17 +108,23 @@ export default {
         url: this.table_config.url,
         data: this.table_config.data,
       };
-      GetTableData(requestData).then((response) => {
-        const data = response.data;
-        // 判断数据是否存在
-        if (data) {
-          this.table_data = data.data;
-        }
-        this.$nextTick(() => {
-          // 考虑到DOM元素渲染完成时候
+      this.loading_data = true;
+      GetTableData(requestData)
+        .then((response) => {
+          const data = response.data;
+          // 判断数据是否存在
+          if (data) {
+            this.table_data = data.data;
+          }
+          this.$nextTick(() => {
+            // 考虑到DOM元素渲染完成时候
+          });
+          this.total = data.total;
+          this.loading_data = false;
+        })
+        .then((error) => {
+          this.loading_data = false;
         });
-        this.total = data.total;
-      });
     },
     requestData(params = "") {
       if (params) {

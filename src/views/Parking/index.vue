@@ -76,6 +76,8 @@
       <!-- 禁启用 -->
       <template v-slot:status="slotData">
         <el-switch
+          :disabled="slotData.data.id == switch_disabled"
+          @change="switchChange(slotData.data)"
           v-model="slotData.data.status"
           active-value="2"
           inactive-value="1"
@@ -95,7 +97,10 @@
         <el-button type="danger" size="small" @click="edit(slotData.data.id)"
           >编辑</el-button
         >
-        <el-button size="small" @click="delConfirm(slotData.data.id)"
+        <el-button
+          size="small"
+          :loading="slotData.data.id == rowId"
+          @click="delConfirm(slotData.data.id)"
           >删除</el-button
         >
       </template>
@@ -110,7 +115,7 @@ import CityArea from "@c/common/cityArea";
 import MapLocation from "@c/dialog/showMapLocation";
 import TableData from "@c/tableData";
 // API
-import { ParkingDelete } from "@/api/parking";
+import { ParkingDelete, ParkingStatus } from "@/api/parking";
 //common
 import { address, parkingType } from "@/utils/common";
 
@@ -120,6 +125,9 @@ export default {
   data() {
     _this = this;
     return {
+      switch_disabled: "",
+      rowId: "",
+      switch_flag: false,
       //表格配置
       table_config: {
         thead: [
@@ -254,15 +262,43 @@ export default {
         type: "warning",
       })
         .then(() => {
+          this.rowId = id;
           ParkingDelete({ id }).then((response) => {
             this.$message({
               type: "success",
               message: response.message,
             });
+            this.rowId = "";
+            //调用子组件方法
             this.$refs.table.requestData();
           });
         })
-        .catch(() => {});
+        .catch((error) => {
+          this.rowId = "";
+        });
+    },
+    /**禁启用 */
+    switchChange(data) {
+      if (this.switch_flag) {
+        return false;
+      }
+      const requestData = {
+        id: data.id,
+        status: data.status,
+      };
+      // this.switch_disabled = data.id; //第一种方法:组件本身的属性处理
+      this.switch_flag = true;
+      ParkingStatus(requestData)
+        .then((response) => {
+          this.$message({
+            type: "success",
+            message: response.message,
+          });
+          this.switch_flag = false;
+        })
+        .then((error) => {
+          this.switch_flag = false;
+        });
     },
     /** 显示地图 */
     showMap(data) {
