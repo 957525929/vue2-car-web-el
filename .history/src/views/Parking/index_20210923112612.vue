@@ -4,12 +4,9 @@
       <el-row>
         <el-col :span="18">
           <el-form :inline="true" :model="form" class="demo-form-inline">
-            <!-- <el-form-item label="停车场名称">
-              <el-input
-                v-model="form.parking_name"
-                placeholder="审批人"
-              ></el-input>
-            </el-form-item> -->
+            <el-form-item label="停车场名称">
+              <el-input v-model="form.parking_name" placeholder="审批人"></el-input>
+            </el-form-item>
             <el-form-item label="区域">
               <CityArea ref="cityArea" :cityAreaValue.sync="form.area" @callback="callbackComponent" />
             </el-form-item>
@@ -87,7 +84,7 @@ export default {
       //表格配置
       table_config: {
         thead: [
-          { label: "停车场名称", prop: "parkingName" },
+          { label: "停车场名称", props: "parkingName" },
           {
             label: "类型",
             prop: "type",

@@ -87,7 +87,7 @@ export default {
       //表格配置
       table_config: {
         thead: [
-          { label: "停车场名称", prop: "parkingName" },
+          { label: "停车场名称", props: "parkingName" },
           {
             label: "类型",
             prop: "type",

@@ -11,9 +11,22 @@
       <el-form-item label="品牌英文" prop="nameEn">
         <el-input v-model="form.nameEn"></el-input>
       </el-form-item>
-      <el-form-item label="LOGO" prop="imgUrl">
-        <el-input v-model="form.imgUrl"></el-input>
-      </el-form-item>
+      <!-- <el-form-item label="LOGO" prop="imgUrl">
+        <div class="upload-img-wrap">
+          <div class="upload-img">
+            <img v-show="logo_current" :src="logo_current" />
+          </div>
+          <ul class="img-list">
+            <li
+              v-for="item in logo"
+              :key="item.id"
+              @click="logo_current == item.img"
+            >
+              <img :src="item.img" :alt="item.name" />
+            </li>
+          </ul>
+        </div>
+      </el-form-item> -->
       <el-form-item label="禁启用" prop="status">
         <el-radio-group v-model="form.status">
           <el-radio v-for="item in radio_disabled" :key="item.id" :label="item.value">{{ item.label }}</el-radio>
@@ -49,7 +62,7 @@ export default {
       form: {
         nameCh: "",
         nameEn: "",
-        imgUrl: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593447137003&di=8e2c8ba51d3018e302c66a0bd851c7e8&imgtype=0&src=http%3A%2F%2Fimg.bqatj.com%2Fimg%2F4e384e839d6b6e96.jpg",
+        imgUrl: "",
         status: "",
         content: "",
       },

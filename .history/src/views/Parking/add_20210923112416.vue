@@ -5,24 +5,14 @@
         <el-input v-model="form.parkingName"></el-input>
       </el-form-item>
       <el-form-item label="区域" prop="area">
-        <CityArea
-          ref="cityArea"
-          :mapLocation="true"
-          :cityAreaValue.sync="form.area"
-          @callback="callbackComponent"
-        />
+        <CityArea ref="cityArea" :mapLocation="true" :cityAreaValue.sync="form.area" @callback="callbackComponent" />
       </el-form-item>
       <el-form-item label="详细地址" prop="address">
         <el-input v-model="form.address"></el-input>
       </el-form-item>
       <el-form-item label="类型" prop="type">
         <el-radio-group v-model="form.type">
-          <el-radio
-            v-for="item in type"
-            :label="item.value"
-            :key="item.value"
-            >{{ item.label }}</el-radio
-          >
+          <el-radio v-for="item in type" :label="item.value" :key="item.value">{{ item.label }}</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="可停放车辆" prop="carsNumber">
@@ -30,21 +20,12 @@
       </el-form-item>
       <el-form-item label="禁启用" prop="status">
         <el-radio-group v-model="form.status" @change="changeData">
-          <el-radio
-            v-for="item in status"
-            :label="item.value"
-            :key="item.value"
-            >{{ item.label }}</el-radio
-          >
+          <el-radio v-for="item in status" :label="item.value" :key="item.value">{{ item.label }}</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="位置">
         <div class="address-map">
-          <AMap
-            ref="amap"
-            :options="options_map"
-            @callback="callbackComponent"
-          />
+          <AMap ref="amap" :options="options_map" @callback="callbackComponent" />
         </div>
       </el-form-item>
       <el-form-item label="经纬度" prop="lnglat">
@@ -88,17 +69,13 @@ export default {
       },
       //表单规则验证
       rules: {
-        parkingName: [
-          { required: true, message: "请输入停车场名称", trigger: "change" },
-        ],
+        parkingName: [{ required: true, message: "请输入停车场名称", trigger: "change" }],
         carsNumber: [
           { required: true, message: "数量不能为空", trigger: "change" },
           { type: "number", message: "请输入数字" },
         ],
         area: [{ required: true, message: "请选择省市区", trigger: "change" }],
-        lnglat: [
-          { required: true, message: "经纬度不能为空", trigger: "change" },
-        ],
+        lnglat: [{ required: true, message: "经纬度不能为空", trigger: "change" }],
       },
     };
   },

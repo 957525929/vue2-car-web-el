@@ -30,7 +30,7 @@
       </el-row>
     </div>
     <!-- 表格数据 -->
-    <el-table :data="tableData" border style="width: 100%"> 
+    <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="selection" width="35"></el-table-column>
       <!-- <el-table-column prop="name" label="LOGO"></el-table-column> -->
       <el-table-column prop="type" label="车辆品牌"></el-table-column>

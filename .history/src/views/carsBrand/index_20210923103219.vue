@@ -30,7 +30,7 @@
       </el-row>
     </div>
     <!-- 表格数据 -->
-    <el-table :data="tableData" border style="width: 100%"> 
+    <el-table :data="tableData" border style="width: 100%">
       <el-table-column type="selection" width="35"></el-table-column>
       <!-- <el-table-column prop="name" label="LOGO"></el-table-column> -->
       <el-table-column prop="type" label="车辆品牌"></el-table-column>
@@ -57,12 +57,12 @@ export default {
   components: { AddCarsBrand },
   data() {
     return {
-      // 弹窗标记
-      dialog_show: false,
+			// 弹窗标记
+			dialog_show: false,
       form: {
         parking_name: "",
         area: "",
-        type: "",
+        type: ""
       },
       tableData: [
         {
@@ -71,11 +71,11 @@ export default {
           area: "广东省 深圳市 南山区",
           carsNumber: 20,
           disabled: 0,
-          address: "45632121,54541",
-        },
-      ],
+          address: "45632121,54541"
+        }
+      ]
     };
-  },
+  }
 };
 </script>
 <style lass="scss" scoped></style>
