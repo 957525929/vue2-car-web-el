@@ -38,7 +38,7 @@ export default {
         const splitLnglat = this.data.lnglat.split(",");
         const lnglat = {
           lng: splitLnglat[0],
-          lat: splitLnglat[1],
+          lat: splitLnglat[1],pl
         };
         this.$refs.aMap.setMarker(lnglat);
       });

@@ -7,7 +7,7 @@
     :visible.sync="dialogVisible"
     class="cars-dialog-center"
     @close="close"
-    @open="opened"
+    @opened="opened"
     :close-on-click-modal="false"
   >
     <!--内容区-->
@@ -27,7 +27,7 @@
             <li
               v-for="item in logo"
               :key="item.id"
-              @click="logo_current == item.img"
+              @click="logo_current = item.img"
             >
               <img :src="item.img" :alt="item.name" />
             </li>
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { BrandLogo, BrandAdd } from "@/api/brand";
+import { BrandLogo, BrandAdd, BrandDetailed, BrandEdit } from "@/api/brand";
 export default {
   name: "",
   components: {},
@@ -64,6 +64,10 @@ export default {
     flagVisible: {
       type: Boolean,
       default: false,
+    },
+    data: {
+      type: Object,
+      defult: () => {},
     },
   },
   data() {
@@ -78,24 +82,26 @@ export default {
         status: "",
         content: "",
       },
-      //状态
+      // 状态
       radio_disabled: this.$store.state.config.radio_disabled,
+      // 选中的LOGO
       logo_current: "",
-      //logo
+      // logo
       logo: [],
     };
   },
   methods: {
     opened() {
       this.getBrandLogo();
+      this.getDetailed();
     },
-    //获取logo
+    /** 获取LOGO */
     getBrandLogo() {
-      //存在数据时，不再请求接口
+      // 存在数据时，不再请求接口
       if (this.logo.length != 0) {
         return false;
       }
-      //没有数据时，
+      // 没有数据时
       BrandLogo().then((response) => {
         const data = response.data;
         if (data) {
@@ -103,21 +109,42 @@ export default {
         }
       });
     },
+    /** 获取详情 */
+    getDetailed() {
+      this.form = this.data;
+      this.logo_current = this.data.imgUrl;
+      this.form.imgUrl = this.data.imgUrl;
+    },
+    /** 提交 */
     submit() {
-      this.form.imgUrl = this.logo_current;
+      this.data.id ? this.edit() : this.add();
+    },
+    /** 添加 */
+    add() {
       BrandAdd(this.form).then((response) => {
         this.$message({
           type: "success",
           message: response.message,
         });
+        this.reset("form");
       });
-      //重置表单
-      this.reset("form");
     },
-    //重置表单
+    /** 修改 */
+    edit() {
+      this.form.imgUrl = this.logo_current;
+      const requestData = JSON.parse(JSON.stringify(this.form));
+      BrandEdit(requestData).then((response) => {
+        this.$message({
+          type: "success",
+          message: response.message,
+        });
+        this.reset("form");
+      });
+    },
+    /** 重置表单 */
     reset(formName) {
       this.$refs[formName].resetFields();
-      //重置表单
+      // 清除选中的LOGO
       this.logo_current = "";
     },
     close() {
