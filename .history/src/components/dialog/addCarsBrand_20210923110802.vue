@@ -7,7 +7,7 @@
     :visible.sync="dialogVisible"
     class="cars-dialog-center"
     @close="close"
-    @opened="opened"
+    @open="opened"
     :close-on-click-modal="false"
   >
     <!--内容区-->
@@ -27,7 +27,7 @@
             <li
               v-for="item in logo"
               :key="item.id"
-              @click="logo_current = item.img"
+              @click="logo_current == item.img"
             >
               <img :src="item.img" :alt="item.name" />
             </li>
@@ -36,7 +36,12 @@
       </el-form-item>
       <el-form-item label="禁启用" prop="status">
         <el-radio-group v-model="form.status">
-          <el-radio v-for="item in radio_disabled" :key="item.id" :label="item.value">{{ item.label }}</el-radio>
+          <el-radio
+            v-for="item in radio_disabled"
+            :key="item.id"
+            :label="item.value"
+            >{{ item.label }}</el-radio
+          >
         </el-radio-group>
       </el-form-item>
       <el-form-item>
@@ -51,7 +56,7 @@
 </template>
 
 <script>
-import { BrandLogo, BrandAdd, BrandDetailed, BrandEdit } from "@/api/brand";
+import { BrandLogo, BrandAdd } from "@/api/brand";
 export default {
   name: "",
   components: {},
@@ -59,10 +64,6 @@ export default {
     flagVisible: {
       type: Boolean,
       default: false,
-    },
-    data: {
-      type: Object,
-      defult: () => {},
     },
   },
   data() {
@@ -73,30 +74,28 @@ export default {
       form: {
         nameCh: "",
         nameEn: "",
-        imgUrl: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593447137003&di=8e2c8ba51d3018e302c66a0bd851c7e8&imgtype=0&src=http%3A%2F%2Fimg.bqatj.com%2Fimg%2F4e384e839d6b6e96.jpg",
+        imgUrl: "",
         status: "",
         content: "",
       },
-      // 状态
+      //状态
       radio_disabled: this.$store.state.config.radio_disabled,
-      // 选中的LOGO
       logo_current: "",
-      // logo
+      //logo
       logo: [],
     };
   },
   methods: {
     opened() {
       this.getBrandLogo();
-      this.getDetailed();
     },
-    /** 获取LOGO */
+    //获取logo
     getBrandLogo() {
-      // 存在数据时，不再请求接口
+      //存在数据时，不再请求接口
       if (this.logo.length != 0) {
         return false;
       }
-      // 没有数据时
+      //没有数据时，
       BrandLogo().then((response) => {
         const data = response.data;
         if (data) {
@@ -104,42 +103,21 @@ export default {
         }
       });
     },
-    /** 获取详情 */
-    getDetailed() {
-      this.form = this.data;
-      this.logo_current = this.data.imgUrl;
-      this.form.imgUrl = this.data.imgUrl;
-    },
-    /** 提交 */
     submit() {
-      this.data.id ? this.edit() : this.add();
-    },
-    /** 添加 */
-    add() {
+      this.form.imgUrl = this.logo_current;
       BrandAdd(this.form).then((response) => {
         this.$message({
           type: "success",
           message: response.message,
         });
-        this.reset("form");
       });
+      //重置表单
+      this.reset("form");
     },
-    /** 修改 */
-    edit() {
-      this.form.imgUrl = this.logo_current;
-      const requestData = JSON.parse(JSON.stringify(this.form));
-      BrandEdit(requestData).then((response) => {
-        this.$message({
-          type: "success",
-          message: response.message,
-        });
-        this.reset("form");
-      });
-    },
-    /** 重置表单 */
+    //重置表单
     reset(formName) {
       this.$refs[formName].resetFields();
-      // 清除选中的LOGO
+      //重置表单
       this.logo_current = "";
     },
     close() {
