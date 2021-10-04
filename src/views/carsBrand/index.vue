@@ -57,6 +57,7 @@
     <AddCarsBrand
       :flagVisible.sync="dialog_show"
       :data="data_brand"
+      @callbackComponent="callbackComponent"
     /><!--父组件往子组件传数据时，是一个单向数据流-->
   </div>
 </template>
@@ -117,6 +118,12 @@ export default {
     };
   },
   methods: {
+    callbackComponent(params) {
+      if (params.function) {
+        this[params.function]();
+      }
+    },
+
     /** 搜索 */
     search() {
       const requestData = {

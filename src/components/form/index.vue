@@ -1,22 +1,26 @@
 <template>
-  <el-form ref="form" label-width="120px">
+  <el-form ref="form" :model="formData" :label-width="labelWidth">
     <el-form-item
       v-for="item in formItem"
       :key="item.prop"
       :prop="item.prop"
       :label="item.label"
+      :rules="item.rules"
     >
       <!--Input-->
       <el-input
         v-if="item.type === 'Input'"
-        v-model="form[item.prop]"
+        v-model.trim="formData[item.prop]"
         :placeholder="item.placeholder"
         :style="{ width: item.width }"
         :disabled="item.disabled"
       ></el-input>
       <!--省市区-->
       <slot v-if="item.type === 'Slot'" :name="item.slotName" />
-      <el-radio-group v-if="item.type === 'Radio'" v-model="form[item.prop]">
+      <el-radio-group
+        v-if="item.type === 'Radio'"
+        v-model="formData[item.prop]"
+      >
         <el-radio
           v-for="radio in item.options"
           :label="radio.value"
@@ -51,27 +55,60 @@ export default {
       type: Array,
       default: () => [],
     },
+    formData: {
+      type: Object,
+      default: () => [],
+    },
     //按钮
     formHandler: {
       type: Array,
       default: () => [],
     },
+    labelWidth: {
+      type: String,
+      default: "120px",
+    },
   },
   data() {
     return {
-      form: {},
+      //是否存在必填规则
+      type_msg: {
+        Input: "请输入",
+        Radio: "请选择",
+      },
     };
   },
   methods: {
     initFormData() {
-      const formData = {};
       this.formItem.forEach((item) => {
-        if (item.prop) {
-          formData[item.prop] = item.value || null;
+        //rules规则
+        if (item.required) {
+          this.rules(item);
+        }
+        //自定义规则
+        if (item.validator) {
+          item.rules = item.validator;
         }
       });
-      this.form = formData;
-      console.log(this.form);
+    },
+    rules(item) {
+      // console.log(item);
+
+      const requestRules = [
+        {
+          required: true,
+          message:
+            item.requiredMsg || `${this.type_msg[item.type]}${item.label}`,
+          trigger: "change",
+        },
+      ];
+      //其他的rules的规则
+      if (item.rules && item.rules.length > 0) {
+        item.rules = requestRules.concat(item.rules);
+      } else {
+        item.rules = requestRules;
+      }
+      console.log(item.rules);
     },
   },
   watch: {

@@ -10,15 +10,12 @@
     @opened="opened"
     :close-on-click-modal="false"
   >
-    <!--内容区-->
-    <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="品牌中文" prop="nameCh">
-        <el-input v-model="form.nameCh"></el-input>
-      </el-form-item>
-      <el-form-item label="品牌英文" prop="nameEn">
-        <el-input v-model="form.nameEn"></el-input>
-      </el-form-item>
-      <el-form-item label="LOGO" prop="imgUrl">
+    <VueForm
+      :formData="form_data"
+      :formItem="form_item"
+      :formHandler="form_handler"
+    >
+      <template v-slot:logo>
         <div class="upload-img-wrap">
           <div class="upload-img">
             <img v-show="logo_current" :src="logo_current" />
@@ -33,28 +30,20 @@
             </li>
           </ul>
         </div>
-      </el-form-item>
-      <el-form-item label="禁启用" prop="status">
-        <el-radio-group v-model="form.status">
-          <el-radio v-for="item in radio_disabled" :key="item.id" :label="item.value">{{ item.label }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="danger" @click="submit">确定</el-button>
-      </el-form-item>
-    </el-form>
-    <!-- <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-    </div>-->
+      </template>
+    </VueForm>
   </el-dialog>
 </template>
 
 <script>
+//组件
+import VueForm from "@c/form";
 import { BrandLogo, BrandAdd, BrandDetailed, BrandEdit } from "@/api/brand";
 export default {
   name: "",
-  components: {},
+  components: {
+    VueForm,
+  },
   props: {
     flagVisible: {
       type: Boolean,
@@ -69,11 +58,40 @@ export default {
     return {
       // 弹窗显示/关闭标记
       dialogVisible: false,
+      form_data: {
+        nameCh: "",
+        nameEn: "",
+        imgUrl: "",
+        status: "",
+        content: "",
+      },
+      //表单项y
+      form_item: [
+        { type: "Input", label: "品牌中文", prop: "nameCh" },
+        { type: "Input", label: "品牌英文", prop: "nameEn" },
+        { type: "Slot", slotName: "logo", label: "LOGO", prop: "imgUrl" },
+        {
+          type: "Radio",
+          label: "禁启用",
+          prop: "status",
+          options: this.$store.state.config.radio_disabled,
+        },
+      ],
+      //表单按钮
+      form_handler: [
+        {
+          label: "确定",
+          key: "submit",
+          type: "danger",
+          handler: () => this.submit(),
+        },
+      ],
       // 表单
       form: {
         nameCh: "",
         nameEn: "",
-        imgUrl: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593447137003&di=8e2c8ba51d3018e302c66a0bd851c7e8&imgtype=0&src=http%3A%2F%2Fimg.bqatj.com%2Fimg%2F4e384e839d6b6e96.jpg",
+        imgUrl:
+          "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593447137003&di=8e2c8ba51d3018e302c66a0bd851c7e8&imgtype=0&src=http%3A%2F%2Fimg.bqatj.com%2Fimg%2F4e384e839d6b6e96.jpg",
         status: "",
         content: "",
       },
@@ -106,9 +124,9 @@ export default {
     },
     /** 获取详情 */
     getDetailed() {
-      this.form = this.data;
+      this.form_data = this.data;
       this.logo_current = this.data.imgUrl;
-      this.form.imgUrl = this.data.imgUrl;
+      this.form_data.imgUrl = this.data.imgUrl;
     },
     /** 提交 */
     submit() {
@@ -122,27 +140,35 @@ export default {
           message: response.message,
         });
         this.reset("form");
+        this.$emit("callbackComponent", {
+          function: "search",
+        });
       });
     },
     /** 修改 */
     edit() {
-      this.form.imgUrl = this.logo_current;
-      const requestData = JSON.parse(JSON.stringify(this.form));
+      this.form_data.imgUrl = this.logo_current;
+      const requestData = JSON.parse(JSON.stringify(this.form_data));
       BrandEdit(requestData).then((response) => {
         this.$message({
           type: "success",
           message: response.message,
         });
-        this.reset("form");
+        this.reset();
       });
     },
     /** 重置表单 */
-    reset(formName) {
-      this.$refs[formName].resetFields();
-      // 清除选中的LOGO
+    reset() {
+      // // 清除选中的LOGO
       this.logo_current = "";
+      for (let key in this.form_data) {
+        this.form_data[key] = "";
+      }
     },
     close() {
+      this.reset();
+      //关闭窗口
+      this.dialogVisible= false
       this.$emit("update:flagVisible", false); // {}
     },
   },
