@@ -11,26 +11,52 @@
               ></el-input>
             </el-form-item> -->
             <el-form-item label="区域">
-              <CityArea ref="cityArea" :cityAreaValue.sync="form.area" @callback="callbackComponent" />
+              <CityArea
+                ref="cityArea"
+                :cityAreaValue.sync="form.area"
+                @callback="callbackComponent"
+              />
             </el-form-item>
             <el-form-item label="类型">
               <el-select v-model="form.type" placeholder="活动区域">
-                <el-option v-for="item in parking_type" :label="item.label" :value="item.value" :key="item.value"></el-option>
+                <el-option
+                  v-for="item in parking_type"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="item.value"
+                ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="禁启用">
-              <el-select v-model="form.status" placeholder="请选择" class="width-120">
-                <el-option v-for="item in parking_status" :label="item.label" :value="item.value" :key="item.value"></el-option>
+              <el-select
+                v-model="form.status"
+                placeholder="请选择"
+                class="width-120"
+              >
+                <el-option
+                  v-for="item in parking_status"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="item.value"
+                ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="关键字">
-              <el-select v-model="search_key" placeholder="请选择" @change="searchKeySelect" class="width-120">
+              <el-select
+                v-model="search_key"
+                placeholder="请选择"
+                @change="searchKeySelect"
+                class="width-120"
+              >
                 <el-option label="停车场名称" value="parkingName"></el-option>
                 <el-option label="详细区域" value="address"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-input v-model="keyword" placeholder="请输入关键字按Enter搜索"></el-input>
+              <el-input
+                v-model="keyword"
+                placeholder="请输入关键字按Enter搜索"
+              ></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="danger" @click="search">搜索</el-button>
@@ -49,16 +75,32 @@
     <TableData ref="table" :config="table_config">
       <!-- 禁启用 -->
       <template v-slot:status="slotData">
-        <el-switch :disabled="slotData.data.id == switch_disabled" @change="switchChange(slotData.data)" v-model="slotData.data.status" active-color="#13ce66" inactive-color="#ff4949"> </el-switch>
+        <el-switch
+          :disabled="slotData.data.id == switch_disabled"
+          @change="switchChange(slotData.data)"
+          v-model="slotData.data.status"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+        >
+        </el-switch>
       </template>
       <!--查看地图-->
       <template v-slot:lnglat="slotData">
-        <el-button type="success" size="mini" @click="showMap(slotData.data)">查看地图</el-button>
+        <el-button type="success" size="mini" @click="showMap(slotData.data)"
+          >查看地图</el-button
+        >
       </template>
       <!--操作-->
       <template v-slot:operation="slotData">
-        <el-button type="danger" size="small" @click="edit(slotData.data.id)">编辑</el-button>
-        <el-button size="small" :loading="slotData.data.id == rowId" @click="delConfirm(slotData.data.id)">删除</el-button>
+        <el-button type="danger" size="small" @click="edit(slotData.data.id)"
+          >编辑</el-button
+        >
+        <el-button
+          size="small"
+          :loading="slotData.data.id == rowId"
+          @click="delConfirm(slotData.data.id)"
+          >删除</el-button
+        >
       </template>
     </TableData>
 
@@ -238,9 +280,10 @@ export default {
       if (this.switch_flag) {
         return false;
       }
+      let dataStatus = data.status == false ? "0" : "1";
       const requestData = {
         id: data.id,
-        status: data.status,
+        status: dataStatus,
       };
       // this.switch_disabled = data.id; //第一种方法:组件本身的属性处理
       this.switch_flag = true;

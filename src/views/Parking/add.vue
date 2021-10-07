@@ -174,6 +174,8 @@ export default {
     //提交表单
     formValidate() {
       console.log("11111");
+      console.log(this.form_data);
+      console.log(this.$refs.vuform);
       this.$refs.vuform.$refs.form.validate((valid) => {
         console.log(valid);
         if (valid) {
@@ -195,7 +197,7 @@ export default {
     //新增停车场
     addParking() {
       this.button_loading = true;
-      ParkingAdd(this.form)
+      ParkingAdd(this.form_data)
         .then((response) => {
           this.$message({
             type: "primary",
@@ -263,7 +265,7 @@ export default {
     },
     //获取经纬度
     getLonlat(data) {
-      this.form.lnglat = data.lnglat.value;
+      this.form_data.lnglat = data.lnglat.value;
     },
     mapLoad() {
       this.getDetailed();

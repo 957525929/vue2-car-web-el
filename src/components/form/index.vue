@@ -15,6 +15,33 @@
         :style="{ width: item.width }"
         :disabled="item.disabled"
       ></el-input>
+      <!--Select-->
+      <el-select
+        v-if="item.type === 'Select'"
+        v-model.trim="formData[item.prop]"
+        :placeholder="item.placeholder"
+        :style="{ width: item.width }"
+        :disabled="item.disabled"
+      >
+        <el-option
+          v-for="selectItem in item.options"
+          :key="selectItem.value || selectItem[item.select_vlaue]"
+          :value="selectItem.value || selectItem[item.select_vlaue]"
+          :label="selectItem.label || selectItem[item.select_label]"
+        ></el-option>
+      </el-select>
+      <!-- 禁启用 -->
+      <el-radio-group
+        v-if="item.type === 'Disabled'"
+        v-model="formData[item.prop]"
+      >
+        <el-radio
+          v-for="radio in radio_disabled"
+          :label="radio.value"
+          :key="radio.value"
+          >{{ radio.label }}</el-radio
+        >
+      </el-radio-group>
       <!--省市区-->
       <slot v-if="item.type === 'Slot'" :name="item.slotName" />
       <el-radio-group
@@ -71,6 +98,8 @@ export default {
   },
   data() {
     return {
+      //禁启用数据
+      radio_disabled: this.$store.state.config.radio_disabled,
       //是否存在必填规则
       type_msg: {
         Input: "请输入",
