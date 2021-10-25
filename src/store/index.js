@@ -7,6 +7,6 @@ import config from "./modules/config";
 export default new Vuex.Store({
   modules: {
     app,
-    config,
-  },
+    config
+  }
 });

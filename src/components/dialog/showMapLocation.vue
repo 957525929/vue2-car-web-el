@@ -2,7 +2,14 @@
   <!--dialog 弹窗
     子组件接收父组件的数据，是通过属性接收
   -->
-  <el-dialog :title="data.parkingName" :visible.sync="dialogVisible" class="cars-dialog-center" @close="close" @opened="opened" :close-on-click-modal="false">
+  <el-dialog
+    :title="data.parkingName"
+    :visible.sync="dialogVisible"
+    class="cars-dialog-center"
+    @close="close"
+    @opened="opened"
+    :close-on-click-modal="false"
+  >
     <div style="height: 500px;"><AMap ref="aMap" /></div>
   </el-dialog>
 </template>
@@ -16,43 +23,42 @@ export default {
   props: {
     flagVisible: {
       type: Boolean,
-      default: false,
+      default: false
     },
     data: {
-      type: Object,
-      default: () => {},
-    },
+        type: Object,
+        default: () => {}
+    }
   },
   data() {
     return {
-      // 弹窗显示/关闭标记
-      dialogVisible: false,
+        // 弹窗显示/关闭标记
+        dialogVisible: false
     };
   },
   methods: {
-    opened() {
+    opened(){
       this.$refs.aMap.mapCreate();
       // 调DOM元素的方法时，要确保DOM元素已被加载完成
-      this.$nextTick(() => {
-        // DOM元素渲染完成后执行
+      this.$nextTick(() => { // DOM元素渲染完成后执行
         const splitLnglat = this.data.lnglat.split(",");
         const lnglat = {
-          lng: splitLnglat[0],
-          lat: splitLnglat[1],
-        };
+            lng: splitLnglat[0],
+            lat: splitLnglat[1]
+        }
         this.$refs.aMap.setMarker(lnglat);
-      });
+      })
     },
     close() {
-      this.$refs.aMap.mapDestroy();
-      this.$emit("update:flagVisible", false); // {}
-    },
+        this.$refs.aMap.mapDestroy();
+        this.$emit("update:flagVisible", false); // {}
+    }
   },
   watch: {
     flagVisible: {
       handler(newValue, oldValue) {
         this.dialogVisible = newValue;
-      },
+      }
     },
     // parking_data: {
     //     handler(newValue, oldValue) {
@@ -61,7 +67,8 @@ export default {
     //         this.data = newValue
     //     }
     // }
-  },
+  }
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang='scss' scoped>
+</style>

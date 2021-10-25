@@ -1,8 +1,9 @@
 <template>
   <div class="parking-add">
     <VueForm
+      ref="vueForm"
       :formData="form_data"
-      :formItem="form_item"
+      :formItme="form_item"
       :formHandler="form_handler"
     >
       <template v-slot:maintain>
@@ -74,60 +75,27 @@
           </el-row>
         </div>
       </template>
-      <template v-slot:content>
-        <div ref="editorDom" style="text-align: left;"></div>
-      </template>
     </VueForm>
   </div>
 </template>
 <script>
-// 富文本编辑器
-import Editor from "wangeditor";
-//组件
+// 组件
 import VueForm from "@c/form";
-//API
-import { GetCarsBrand, GetParking } from "@/api/common";
-import { CarsAdd } from "@/api/cars";
+// API
+import { GetCarsBrand, GetParking, GetQiniuToken } from "@/api/common";
+import { CarsAdd, CarsDetailed, CarsEdit } from "@/api/cars";
 export default {
   name: "ParkingAdd",
-  components: {
-    VueForm,
-  },
+  components: { VueForm },
   data() {
     return {
+      // id
+      id: this.$route.query.id,
       // 富文本对象
       editor: null,
       // 能源类型
       energyType: this.$store.state.config.energyType,
       cars_attr: [],
-      form: {
-        energy: 1,
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
-      },
-      form_data: {
-        parkingId: "",
-        carsBrandId: "",
-        carsMode: "",
-        carsNumber: "",
-        carsFrameNumber: "",
-        engineNumber: "",
-        yearCheck: true,
-        gear: 1,
-        energyType: 2,
-        electric: 100,
-        oil: 100,
-        carsAttr: "",
-        content: "",
-        maintainDate: "",
-        status: true,
-      },
       form_item: [
         {
           type: "Select",
@@ -137,6 +105,7 @@ export default {
           select_vlaue: "id", // 自有的私有属性
           select_label: "nameCh",
           options: [],
+          required: true,
         },
         {
           type: "Select",
@@ -146,30 +115,42 @@ export default {
           select_label: "parkingName",
           prop: "parkingId",
           options: [],
+          required: true,
         },
         {
           type: "Input",
           label: "车辆型号",
           placeholder: "请输入车辆型号",
           prop: "carsMode",
+          required: true,
         },
         {
           type: "Input",
           label: "车牌号",
           placeholder: "请输入车牌号",
           prop: "carsNumber",
+          required: true,
         },
         {
           type: "Input",
           label: "车架号",
           placeholder: "请输入车架号",
           prop: "carsFrameNumber",
+          required: true,
+        },
+        {
+          type: "Upload",
+          label: "缩略图",
+          placeholder: "请上传缩略图",
+          prop: "carsImg",
+          required: true,
         },
         {
           type: "Input",
           label: "发动机号",
           placeholder: "请输入发动机号",
           prop: "engineNumber",
+          required: true,
         },
         {
           type: "Radio",
@@ -210,8 +191,7 @@ export default {
           label: "车辆属性",
         },
         {
-          type: "Slot",
-          slotName: "content",
+          type: "Wangeditor",
           prop: "content",
           label: "车辆描述",
         },
@@ -225,39 +205,81 @@ export default {
         },
         { label: "重置", key: "reset" },
       ],
-      //车辆品牌列表
+      form_data: {
+        parkingId: "",
+        carsBrandId: "",
+        carsMode: "",
+        carsNumber: "",
+        carsFrameNumber: "",
+        engineNumber: "",
+        carsImg: "",
+        yearCheck: true,
+        gear: 1,
+        energyType: 2,
+        electric: 100,
+        oil: 100,
+        carsAttr: "",
+        content: "",
+        maintainDate: "",
+        status: true,
+      },
+      // 车辆品牌列表
       carsBrandList: [],
+      //上传文件配置
+      uploadData: {
+        token: "",
+      },
     };
   },
   beforeMount() {
-    this.getCarBrandlist();
+    this.getCarsBrandList();
     this.getParkingList();
+    this.getDetailed();
   },
-  mounted() {
-    this.createEditor();
-  },
+  mounted() {},
   methods: {
     formValidate() {
-      console.log("submit!");
       this.formatCarsAttr();
-      CarsAdd(this.form_data).then((response) => {
-        console.log(response);
+      this.$refs.vueForm.$refs.form.validate((valid) => {
+        if (valid) {
+          this.id ? this.edit() : this.add();
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
       });
     },
-    //获取车辆品牌
-    getCarBrandlist() {
+    /** edit */
+    edit() {
+      CarsEdit({ ...this.form_data, id: this.id }).then((response) => {
+        this.$message({
+          message: response.message,
+          type: "success",
+        });
+      });
+    },
+    add() {
+      CarsAdd(this.form_data).then((response) => {
+        this.$message({
+          message: response.message,
+          type: "success",
+        });
+        this.$refs.vueForm.resetForm();
+        this.cars_attr = [];
+        this.form_data.content = "";
+      });
+    },
+    // 获取车辆品牌
+    getCarsBrandList() {
       GetCarsBrand().then((response) => {
-        console.log(response);
         const data = response.data.data;
         if (data) {
           const carsBrand = this.form_item.filter(
             (item) => item.prop == "carsBrandId"
           );
-          console.log(this.form_item);
           if (carsBrand.length > 0) {
             carsBrand[0].options = data;
           }
-          this.carsBrandList = data;
         }
       });
     },
@@ -273,6 +295,35 @@ export default {
             parking[0].options = data;
           }
         }
+      });
+    },
+    /** 获取详情 */
+    getDetailed() {
+      if (!this.id) {
+        return false;
+      }
+      CarsDetailed({ id: this.id }).then((response) => {
+        const data = response.data;
+        if (!data) {
+          return false;
+        }
+        for (let key in data) {
+          if (Object.keys(this.form_data).includes(key)) {
+            this.form_data[key] = data[key];
+          }
+        }
+        const carsAttr = JSON.parse(data.carsAttr);
+        const arr = [];
+        for (let key in carsAttr) {
+          const json = {};
+          json.attr_key = key;
+          json.attr_value = carsAttr[key];
+          // { attr_key: "", attr_value: "" }
+          arr.push(json);
+        }
+        this.cars_attr = arr;
+
+        // { attr_key: "", attr_value: "" }
       });
     },
     /** 添加车辆属性 */
@@ -297,15 +348,8 @@ export default {
       });
       this.form_data.carsAttr = JSON.stringify(carsAttr);
     },
-    /** 创建富文本对象 */
-    createEditor() {
-      this.editor = new Editor(this.$refs.editorDom);
-      this.editor.customConfig.onchange = (html) => {
-        this.form_data.content = html;
-      };
-      this.editor.create(); // 创建富文本实例
-    },
-    changeEnergyType() {
+
+    changeEnergyType(value) {
       this.form_data.oil = 0;
       this.form_data.electric = 0;
     },
@@ -313,5 +357,8 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "./style.scss";
+.cars-attr-list {
+  margin-top: 15px;
+  overflow: hidden;
+}
 </style>

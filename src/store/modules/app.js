@@ -33,7 +33,7 @@ const actions = {
                 reject(error)
             })
         })
-    },  
+    },
     logoutAction({ commit }){
         return new Promise((resolve, reject) => {
             Logout().then(response => {

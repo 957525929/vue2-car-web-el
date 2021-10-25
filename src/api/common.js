@@ -10,6 +10,7 @@ export function GetCity(data = {}) {
     data,
   });
 }
+
 /**
  * 获取table列表
  */
@@ -20,6 +21,18 @@ export function GetTableData(params = {}) {
     data: params.data,
   });
 }
+
+/**
+ * 删除列表
+ */
+export function Delete(params = {}) {
+  return service.request({
+    method: "post",
+    url: requestUrl[params.url],
+    data: params.data,
+  });
+}
+
 /**
  * 获取车辆品牌
  */
@@ -38,6 +51,16 @@ export function GetParking(data = {}) {
   return service.request({
     method: "post",
     url: "/common/getParking/",
+    data,
+  });
+}
+/**
+ * 获取七牛云 token
+ */
+export function GetQiniuToken(data = {}) {
+  return service.request({
+    method: "post",
+    url: "/uploadImgToken/",
     data,
   });
 }
